@@ -69,6 +69,12 @@ _TOOLCHAIN_TAG = tag_class(
             doc = "Default edition to apply to toolchains.",
             default = _DEFAULT_EDITION,
         ),
+        "extra_rustc_flags": attr.string_list_dict(
+            doc = "Additional rustc flags by target triple.",
+        ),
+        "extra_exec_rustc_flags": attr.string_list_dict(
+            doc = "Additional rustc flags by exec triple.",
+        ),
     },
 )
 
@@ -101,6 +107,8 @@ def _toolchains_impl(mctx):
             version = _DEFAULT_RUSTC_VERSION,
             rustfmt_version = "",
             edition = _DEFAULT_EDITION,
+            extra_rustc_flags = {},
+            extra_exec_rustc_flags = {},
         ))
 
     versions = set([])
@@ -260,7 +268,9 @@ def _toolchains_impl(mctx):
         if existing and (
             existing.version != tag.version or
             (existing.rustfmt_version or existing.version) != rustfmt_version or
-            existing.edition != tag.edition
+            existing.edition != tag.edition or
+            existing.extra_rustc_flags != tag.extra_rustc_flags or
+            existing.extra_exec_rustc_flags != tag.extra_exec_rustc_flags
         ):
             fail("Toolchain repo {} has conflicting tag configurations".format(repo_name))
 
@@ -271,6 +281,8 @@ def _toolchains_impl(mctx):
                 version = tag.version,
                 rustfmt_version = rustfmt_version,
                 edition = tag.edition,
+                extra_rustc_flags = tag.extra_rustc_flags,
+                extra_exec_rustc_flags = tag.extra_exec_rustc_flags,
             )
         is_dev_dependency = had_tags and mctx.is_dev_dependency(tag)
         if is_dev_dependency:

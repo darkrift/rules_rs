@@ -14,6 +14,8 @@ def declare_rustc_toolchains(
         *,
         version,
         edition,
+        extra_rustc_flags = {},
+        extra_exec_rustc_flags = {},
         execs = SUPPORTED_EXEC_TRIPLES,
         targets = SUPPORTED_TARGET_TRIPLES):
     """Declare toolchains for all supported target platforms."""
@@ -81,7 +83,7 @@ def declare_rustc_toolchains(
                 "@platforms//os:ios": ".dylib",
                 "@platforms//os:macos": ".dylib",
                 "@platforms//os:nixos": ".so",
-                "@platforms//os:uefi": "", # UEFI doesn't have dynamic linking
+                "@platforms//os:uefi": "",  # UEFI doesn't have dynamic linking
                 "@platforms//os:windows": ".dll",
                 "//conditions:default": ".so",
             }),
@@ -97,6 +99,11 @@ def declare_rustc_toolchains(
                 "//conditions:default": [],
             }),
             default_edition = edition,
+            extra_exec_rustc_flags = extra_exec_rustc_flags.get(triple),
+            extra_rustc_flags = select(
+                {"@rules_rs//rs/experimental/platforms/config:" + triple: flags for triple, flags in extra_rustc_flags.items} |
+                {"//conditions:default": []},
+            ),
             exec_triple = triple,
             target_triple = select(target_triple_select),
             visibility = ["//visibility:public"],
