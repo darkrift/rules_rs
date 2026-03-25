@@ -456,24 +456,24 @@ def _generate_hub_and_spokes(
                     # TODO(zbarsky): These tokens got enqueues last, so this can bottleneck
                     # We can try a bit harder to interleave things if we care.
                     info.token.wait()
-                    workspace_cargo_toml_json = package["workspace_cargo_toml_json"]
+                    package_workspace_cargo_toml_json = package["workspace_cargo_toml_json"]
                     cargo_toml_json = run_toml2json(mctx, info.path)
                 else:
                     cargo_toml_json = package["cargo_toml_json"]
-                    workspace_cargo_toml_json = package.get("workspace_cargo_toml_json")
+                    package_workspace_cargo_toml_json = package.get("workspace_cargo_toml_json")
                 strip_prefix = package.get("strip_prefix", "")
 
                 dependencies = [
-                    _spec_to_dep_dict(dep, spec, annotation, workspace_cargo_toml_json)
+                    _spec_to_dep_dict(dep, spec, annotation, package_workspace_cargo_toml_json)
                     for dep, spec in cargo_toml_json.get("dependencies", {}).items()
                 ] + [
-                    _spec_to_dep_dict(dep, spec, annotation, workspace_cargo_toml_json, is_build = True)
+                    _spec_to_dep_dict(dep, spec, annotation, package_workspace_cargo_toml_json, is_build = True)
                     for dep, spec in cargo_toml_json.get("build-dependencies", {}).items()
                 ]
 
                 for target, value in cargo_toml_json.get("target", {}).items():
                     for dep, spec in value.get("dependencies", {}).items():
-                        converted = _spec_to_dep_dict(dep, spec, annotation, workspace_cargo_toml_json)
+                        converted = _spec_to_dep_dict(dep, spec, annotation, package_workspace_cargo_toml_json)
                         converted["target"] = target
                         dependencies.append(converted)
 
