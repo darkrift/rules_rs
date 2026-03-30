@@ -96,8 +96,8 @@ def generate_build_file(rctx, cargo_toml):
 
     package_name = package.get("name")
 
-    build_content = \
-        """load("@rules_rs//rs:rust_crate.bzl", "rust_crate")
+    build_content = """\
+load("@rules_rs//rs:rust_crate.bzl", "rust_crate")
 load("@rules_rs//rs:rust_binary.bzl", "rust_binary")
 load("@{hub_name}//:defs.bzl", "RESOLVED_PLATFORMS")
 
