@@ -782,6 +782,9 @@ crate.annotation(
                 name = repo_name,
                 url = url,
                 strip_prefix = "%s-%s" % (crate_name, version),
+                sbom_extra_qualifiers = {
+                    "repository_url": source.split("+", 1)[1],
+                },
                 checksum = checksum,
                 # The repository will need to recompute these, but this lets us avoid serializing them.
                 use_home_cargo_credentials = use_home_cargo_credentials,
@@ -793,6 +796,7 @@ crate.annotation(
             if dry_run:
                 continue
 
+            # TODO What PURL should that be ?
             local_crate_repository(
                 name = repo_name,
                 path = package["local_path"],
@@ -813,6 +817,7 @@ crate.annotation(
                 name = repo_name,
                 strip_prefix = strip_prefix,
                 git_repo_label = "@" + _external_repo_for_git_source(remote, commit),
+                remote = source,
                 workspace_cargo_toml = annotation.workspace_cargo_toml,
                 **kwargs
             )

@@ -2,6 +2,40 @@ bazel_dep(name = "platforms", version = "1.0.0")
 bazel_dep(name = "llvm", version = "0.6.7")
 bazel_dep(name = "apple_support", version = "1.24.2", repo_name = "build_bazel_apple_support")
 
+# SBOM
+bazel_dep(name = "package_metadata", version = "0.0.7")
+bazel_dep(name = "rules_license", version = "1.0.0")
+bazel_dep(name = "supply-chain-go", version = "0.0.7")
+bazel_dep(name = "supply_chain_tools", version = "0.0.1")
+
+git_override(
+    module_name = "package_metadata",
+    commit = "15dad57b95f15c6595ce4ebd1133f258e91b7cf6",
+    remote = "https://github.com/bazel-contrib/supply-chain",
+    strip_prefix = "metadata",
+)
+
+git_override(
+    module_name = "rules_license",
+    commit = "15dad57b95f15c6595ce4ebd1133f258e91b7cf6",
+    remote = "https://github.com/bazel-contrib/supply-chain",
+    strip_prefix = "rules_license",
+)
+
+git_override(
+    module_name = "supply-chain-go",
+    commit = "15dad57b95f15c6595ce4ebd1133f258e91b7cf6",
+    remote = "https://github.com/bazel-contrib/supply-chain",
+    strip_prefix = "lib/supplychain-go",
+)
+
+git_override(
+    module_name = "supply_chain_tools",
+    commit = "15dad57b95f15c6595ce4ebd1133f258e91b7cf6",
+    remote = "https://github.com/bazel-contrib/supply-chain",
+    strip_prefix = "tools",
+)
+
 osx = use_extension("@llvm//extensions:osx.bzl", "osx")
 osx.framework(name = "CoreFoundation")
 osx.framework(name = "CoreServices")

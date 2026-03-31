@@ -1,0 +1,24 @@
+load("@rules_rust//rust:defs.bzl", "rust_library")
+load("@supply_chain_tools//sbom:cyclonedx.bzl", "cyclonedx")
+load("@supply_chain_tools//sbom:sbom.bzl", "sbom")
+
+rust_library(
+    name = "lib",
+    srcs = [
+        "src/lib.rs",
+    ],
+    crate_name = "git_crates",
+    deps = [
+        "@git_crates//:salsa",
+    ],
+)
+
+sbom(
+    name = "sbom",
+    target = ":lib",
+)
+
+cyclonedx(
+    name = "cyclonedx",
+    sbom = ":sbom",
+)

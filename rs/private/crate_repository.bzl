@@ -1,7 +1,7 @@
 load("@bazel_tools//tools/build_defs/repo:cache.bzl", "get_default_canonical_id")
 load("@bazel_tools//tools/build_defs/repo:utils.bzl", "patch")
 load(":cargo_credentials.bzl", "load_cargo_credentials", "registry_auth_headers")
-load(":repository_utils.bzl", "generate_build_file", "common_attrs")
+load(":repository_utils.bzl", "common_attrs", "generate_build_file")
 load(":toml2json.bzl", "run_toml2json")
 
 def _crate_repository_impl(rctx):
@@ -27,7 +27,7 @@ def _crate_repository_impl(rctx):
 
     cargo_toml = run_toml2json(rctx, "Cargo.toml")
 
-    rctx.file("BUILD.bazel", generate_build_file(rctx, cargo_toml))
+    rctx.file("BUILD.bazel", generate_build_file(rctx, cargo_toml, purl_qualifiers = rctx.attr.sbom_extra_qualifiers))
 
     return rctx.repo_metadata(reproducible = True)
 
@@ -39,6 +39,7 @@ crate_repository = repository_rule(
         "source": attr.string(),
         "use_home_cargo_credentials": attr.bool(),
         "checksum": attr.string(),
+        "sbom_extra_qualifiers": attr.string_dict(),
     } | common_attrs,
 )
 
