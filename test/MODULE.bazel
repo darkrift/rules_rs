@@ -38,19 +38,22 @@ git_override(
 
 osx = use_extension("@llvm//extensions:osx.bzl", "osx")
 osx.frameworks(names = [
-    "CoreFoundation",
-    "CoreServices",
-    "CFNetwork",
-    "DiskArbitration",
-    "AudioUnit",
     "AudioToolbox",
+    "AudioUnit",
+    "CFNetwork",
     "CoreAudio",
     "CoreAudioTypes",
-    "OpenAL",
+    "CoreFoundation",
     "CoreMIDI",
+    "CoreServices",
+    "DiskArbitration",
+    "Foundation",
     "IOKit",
-    "SystemConfiguration",
+    "Kernel",
+    "OSLog",
+    "OpenAL",
     "Security",
+    "SystemConfiguration",
 ])
 use_repo(osx, "macos_sdk")
 
