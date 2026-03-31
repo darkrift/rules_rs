@@ -71,6 +71,7 @@ bzl_library(
     srcs = ["repository_utils.bzl"],
     visibility = ["//rs:__subpackages__"],
     deps = [
+        "//rs/private/purl:builder",
         ":select_utils",
         ":semver",
     ],
@@ -164,12 +165,6 @@ bzl_library(
 )
 
 bzl_library(
-    name = "annotations",
-    srcs = ["annotations.bzl"],
-    visibility = ["//rs:__subpackages__"],
-)
-
-bzl_library(
     name = "cargo_lints",
     srcs = ["cargo_lints.bzl"],
     visibility = ["//rs:__subpackages__"],
@@ -177,8 +172,15 @@ bzl_library(
 )
 
 bzl_library(
-    name = "lint_flags",
-    srcs = ["lint_flags.bzl"],
+    name = "resolver",
+    srcs = ["resolver.bzl"],
+    visibility = ["//rs:__subpackages__"],
+    deps = [":cfg_parser"],
+)
+
+bzl_library(
+    name = "annotations",
+    srcs = ["annotations.bzl"],
     visibility = ["//rs:__subpackages__"],
 )
 
@@ -195,10 +197,9 @@ bzl_library(
 )
 
 bzl_library(
-    name = "resolver",
-    srcs = ["resolver.bzl"],
+    name = "lint_flags",
+    srcs = ["lint_flags.bzl"],
     visibility = ["//rs:__subpackages__"],
-    deps = [":cfg_parser"],
 )
 
 bzl_library(

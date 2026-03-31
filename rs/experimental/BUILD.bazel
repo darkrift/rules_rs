@@ -19,3 +19,13 @@ bzl_library(
         "@bazel_tools//tools/build_defs/repo:local.bzl",
     ],
 )
+
+bzl_library(
+    name = "rules_rust_reexported_extensions",
+    srcs = ["rules_rust_reexported_extensions.bzl"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "@bazel_features//:features",
+        "@rules_rust//rust:bzl_lib",
+    ],
+)

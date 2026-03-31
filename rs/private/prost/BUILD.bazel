@@ -27,29 +27,29 @@ rust_binary(
     name = "protoc_wrapper",
     srcs = ["@rules_rust_prost//private:protoc_wrapper_source"],
     edition = PROST_RUST_EDITION,
+    tags = ["manual"],
     deps = [
         "@rrprd//:heck-0.5.0",
         "@rrprd//:prost",
         "@rrprd//:prost-types",
     ],
-    tags = ["manual"],
 )
 
 rust_library_group(
     name = "prost_runtime",
+    tags = ["manual"],
     deps = [
         "@rrprd//:prost",
     ],
-    tags = ["manual"],
 )
 
 rust_library_group(
     name = "tonic_runtime",
+    tags = ["manual"],
     deps = [
         ":prost_runtime",
         "@rrprd//:tonic",
     ],
-    tags = ["manual"],
 )
 
 rust_prost_toolchain(
@@ -62,8 +62,8 @@ rust_prost_toolchain(
     prost_plugin_flag = "--plugin=protoc-gen-prost=%s",
     prost_runtime = ":prost_runtime",
     prost_types = "@rrprd//:prost-types",
+    tags = ["manual"],
     tonic_plugin = "@rrprd//:protoc-gen-tonic__protoc-gen-tonic",
     tonic_plugin_flag = "--plugin=protoc-gen-tonic=%s",
     tonic_runtime = ":tonic_runtime",
-    tags = ["manual"],
 )
