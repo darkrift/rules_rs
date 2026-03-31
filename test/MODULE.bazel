@@ -37,19 +37,21 @@ git_override(
 )
 
 osx = use_extension("@llvm//extensions:osx.bzl", "osx")
-osx.framework(name = "CoreFoundation")
-osx.framework(name = "CoreServices")
-osx.framework(name = "CFNetwork")
-osx.framework(name = "DiskArbitration")
-osx.framework(name = "AudioUnit")
-osx.framework(name = "AudioToolbox")
-osx.framework(name = "CoreAudio")
-osx.framework(name = "CoreAudioTypes")
-osx.framework(name = "OpenAL")
-osx.framework(name = "CoreMIDI")
-osx.framework(name = "IOKit")
-osx.framework(name = "SystemConfiguration")
-osx.framework(name = "Security")
+osx.frameworks(names = [
+    "CoreFoundation",
+    "CoreServices",
+    "CFNetwork",
+    "DiskArbitration",
+    "AudioUnit",
+    "AudioToolbox",
+    "CoreAudio",
+    "CoreAudioTypes",
+    "OpenAL",
+    "CoreMIDI",
+    "IOKit",
+    "SystemConfiguration",
+    "Security",
+])
 use_repo(osx, "macos_sdk")
 
 #local_path_override(
