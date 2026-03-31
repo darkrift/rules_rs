@@ -1,0 +1,26 @@
+load("//rs/private/purl/percent_encoding:tables_test.bzl", "test_cases")
+load("//rs/private/purl/percent_encoding:test.bzl", "percent_encoding_test")
+
+exports_files(
+    [
+        "percent_encoding.bzl",
+        "tables_test.bzl",
+        "tables.bzl",
+        "test.bzl",
+    ],
+)
+
+filegroup(
+    name = "srcs",
+    srcs = [
+        "percent_encoding.bzl",
+        "tables.bzl",
+        "tables_test.bzl",
+        "test.bzl",
+    ],
+)
+
+percent_encoding_test(
+    name = "percent_encoding_test",
+    cases = test_cases,
+)

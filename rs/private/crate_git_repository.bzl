@@ -15,6 +15,50 @@ _INHERITABLE_FIELDS = [
     "readme",
 ]
 
+def source_to_vcs_url(source):
+    # source is expected to have a field/attribute "repr"
+    url = source
+    if not url.startswith("git+"):
+        fail("expected source.repr to start with 'git+': %r" % url)
+
+    q = url.find("?")  # -1 if not found
+    f = url.find("#")  # -1 if not found
+
+    has_q = (q != -1)
+    has_f = (f != -1)
+
+    # Has both query params and commit hash: strip query, keep commit as @
+    if has_q and has_f:
+        base = url[:q]
+        commit = url[f + 1:]
+        return "%s@%s" % (base, commit)
+
+    # No query params, has commit hash: just replace # with @
+    if (not has_q) and has_f:
+        return url.replace("#", "@")
+
+    # Has query params but no commit hash: extract the ref value as @
+    if has_q and (not has_f):
+        base = url[:q]
+        query = url[q + 1:]
+
+        ref_value = None
+        for param in query.split("&"):
+            for prefix in ["branch=", "tag=", "rev="]:
+                if param.startswith(prefix):
+                    ref_value = param[len(prefix):]
+                    break
+            if ref_value != None:
+                break
+
+        if ref_value == None:
+            ref_value = query
+
+        return "%s@%s" % (base, ref_value)
+
+    # No query params, no commit hash: return as-is
+    return url
+
 def _crate_git_repository_implementation(rctx):
     strip_prefix = rctx.attr.strip_prefix
 
@@ -32,7 +76,7 @@ def _crate_git_repository_implementation(rctx):
         "--force",
         "--force",
         "--detach",
-        "HEAD"
+        "HEAD",
     ])
     if result.return_code != 0:
         fail(result.stderr)
@@ -61,7 +105,9 @@ def _crate_git_repository_implementation(rctx):
             if type(value) == "dict" and value.get("workspace") == True:
                 crate_package[field] = workspace_package.get(field)
 
-    rctx.file("BUILD.bazel", generate_build_file(rctx, cargo_toml))
+    vcs_url = source_to_vcs_url(rctx.attr.remote)
+
+    rctx.file("BUILD.bazel", generate_build_file(rctx, cargo_toml, purl_qualifiers = {"vcs_url": vcs_url}))
 
     return rctx.repo_metadata(reproducible = True)
 
@@ -70,5 +116,6 @@ crate_git_repository = repository_rule(
     attrs = {
         "git_repo_label": attr.label(),
         "workspace_cargo_toml": attr.string(default = "Cargo.toml"),
+        "remote": attr.string(),
     } | common_attrs,
 )

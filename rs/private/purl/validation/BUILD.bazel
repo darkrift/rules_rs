@@ -1,0 +1,12 @@
+exports_files(
+    [
+        "validation.bzl",
+    ],
+)
+
+filegroup(
+    name = "srcs",
+    srcs = [
+        "validation.bzl",
+    ],
+)

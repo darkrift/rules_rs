@@ -12,7 +12,7 @@ def _platform(triple, use_experimental_platforms):
 def rust_crate(
         name,
         crate_name,
-        package_name,
+        purl,
         version,
         aliases,
         deps,
@@ -38,8 +38,7 @@ def rust_crate(
         use_experimental_platforms):
     package_metadata(
         name = name + "_package_metadata",
-        # TODO(zbarsky): repository url for git deps?
-        purl = "pkg:cargo/%s@%s" % (package_name, version),
+        purl = purl,
         visibility = ["//visibility:public"],
     )
 

@@ -1,3 +1,4 @@
+load("//rs/private/purl:builder.bzl", purl_builder = "builder")
 load(":select_utils.bzl", "compute_select")
 load(":semver.bzl", "parse_full_version")
 
@@ -40,7 +41,7 @@ def render_select_build_script_env(platform_items, use_experimental_platforms):
 def _exclude_deps_from_features(features):
     return [f for f in features if not f.startswith("dep:")]
 
-def generate_build_file(rctx, cargo_toml):
+def generate_build_file(rctx, cargo_toml, purl_qualifiers = {}):
     attr = rctx.attr
     package = cargo_toml["package"]
 
@@ -96,6 +97,12 @@ def generate_build_file(rctx, cargo_toml):
 
     package_name = package.get("name")
 
+    purl_build = purl_builder().type("cargo").name(package_name).version(version)
+    for k, v in purl_qualifiers.items():
+        purl_build.add_qualifier(k, v).build()
+
+    purl = purl_build.build()
+
     build_content = """\
 load("@rules_rs//rs:rust_crate.bzl", "rust_crate")
 load("@rules_rs//rs:rust_binary.bzl", "rust_binary")
@@ -104,7 +111,7 @@ load("@{hub_name}//:defs.bzl", "RESOLVED_PLATFORMS")
 rust_crate(
     name = {name},
     crate_name = {crate_name},
-    package_name = {package_name},
+    purl = {purl},
     version = {version},
     aliases = {{
         {aliases}
@@ -170,7 +177,7 @@ rust_crate(
         name = repr(name),
         hub_name = rctx.attr.hub_name,
         crate_name = repr(crate_name),
-        package_name = repr(package_name),
+        purl = repr(purl),
         version = repr(version),
         aliases = ",\n        ".join(['"%s": "%s"' % kv for kv in attr.aliases.items()]),
         deps = ",\n        ".join(['"%s"' % d for d in sorted(deps)]),
